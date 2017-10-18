@@ -1,0 +1,108 @@
+
+load_lib dg.exp
+
+# set lineno format
+set dg-linenum-format {:[ ]*%d[,:]}
+
+proc keen_load { prog } {
+ set exec_status [ catch "exec $prog" ]
+ if { $exec_status != 0 } {
+   set status "fail"
+ } else {
+   set status "pass"
+ }
+ return [ list $status "" ]
+}
+
+# do assemble, compile or link...
+proc keen-compile { prog output compile compile_option options } {
+
+ global srcdir subdir
+ send_user "\nexecuting keen $compile_option $options $prog -o $output"
+
+ # do compile and get execution return, and output file
+ set exec_status [ catch "exec keen $compile_option $options $prog -o $output > $srcdir/$subdir/.keen.output 2>> $srcdir/$subdir/.keen.output" ]
+ set cout [ exec cat $srcdir/$subdir/.keen.output ]
+
+ if { $exec_status != 0 && $cout == ""} {
+   # an error occured and no output produced. May denote an internal error
+   set cout "(internal compiler error)"
+   #send_user "$cout\n"
+   return $cout
+ }
+
+ #send_user "$cout\n"
+
+ #if { $compile == "run" } {
+  #set exec_status [ catch "exec $output"  ]
+  #if { $exec_status != 0 } {
+   #set cout "$output"
+   #send_user "$cout\n"
+   #return $cout
+  #}
+ #}
+
+ return $cout
+
+}
+ 
+
+proc keen-dg-test { prog do_what extraflags } { 
+
+  global srcdir subdir
+  set options $extraflags
+
+  switch $do_what {
+        "preprocess" {
+            set output_file "[file rootname [file tail $prog]].pp"
+	    set compile_option "-E"
+        }
+        "assemble" {
+            set output_file "[file rootname [file tail $prog]].s"
+	    set compile_option "-S"
+        }
+        "compile" {
+            set output_file "[file rootname [file tail $prog]].o"
+	    set compile_option "-c"
+        }
+        "link" {
+            set output_file "[file rootname [file tail $prog]].exe"
+	    set compile_option ""
+        }
+        "run" {
+            set output_file "[file rootname [file tail $prog]].exe"
+	    set compile_option ""
+        }
+        default {
+            perror "$do_what: not a valid dg-do keyword"
+            return ""
+        }
+  }
+
+  set comp_output [keen-compile "$prog" "$srcdir/$subdir/$output_file" "$do_what" "$compile_option" "$options"]
+
+  return [list "$comp_output" "$srcdir/$subdir/$output_file" ]
+
+}
+
+# do some cleanup
+proc keen-dg-finish {} {
+
+  global srcdir subdir
+  send_user "\nnow cleaning up\n"
+  eval exec rm -f [ glob $srcdir/$subdir/*.\[sio\] ]
+  exec rm -f $srcdir/$subdir/.keen.output
+
+}
+
+# Initialize `dg'.
+dg-init
+
+# Main loop.
+dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.\[c\]]] "" "" 
+
+# All done.
+keen-dg-finish
+dg-finish
+
+

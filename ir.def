@@ -1,0 +1,110 @@
+
+DEF_CLASS( n_CLASS_EXPR )
+DEF_CLASS( n_CLASS_STMT )
+DEF_CLASS( n_CLASS_INSN )
+
+DEF_SUBCLASS( n_SUBCLASS_BINOP,    n_CLASS_EXPR )
+DEF_SUBCLASS( n_SUBCLASS_MEM,      n_CLASS_EXPR )
+DEF_SUBCLASS( n_SUBCLASS_CV,       n_CLASS_EXPR )
+DEF_SUBCLASS( n_SUBCLASS_CONST,    n_CLASS_EXPR )
+DEF_SUBCLASS( n_SUBCLASS_CALL,     n_CLASS_EXPR )
+DEF_SUBCLASS( n_SUBCLASS_INT,      n_CLASS_EXPR )
+
+DEF_SUBCLASS( n_SUBCLASS_MOVE,     n_CLASS_STMT )
+DEF_SUBCLASS( n_SUBCLASS_COND,     n_CLASS_STMT )
+DEF_SUBCLASS( n_SUBCLASS_LABEL,    n_CLASS_STMT )
+DEF_SUBCLASS( n_SUBCLASS_INTERNAL, n_CLASS_STMT )
+
+DEF_SUBCLASS( n_SUBCLASS_INSN,     n_CLASS_INSN )
+
+/* DEF_NODEx( nodetype, class, subclass, arg-desc ) */
+/* x is the number of arguments of the node
+ * the arg-desc is a string made of  one letter for each argument of the node
+ * (the string may be "" eventually)
+ * 'e' = an irnode expression or name (n_CLASS_EXPR)
+ * 'E' = a list of irnode expressions 
+ * 'b' = an irnode binop (n_SUBCLASS_BINOP)
+ * 'i' = an integral value
+ * 'l' = a label
+ * 'L' = a list of labels 
+ * 't' = a temporary
+ * 'T' = a list of temporaries
+ * 'M' = an irnode memory or temporary (n_SUBCLASS_MEM) 
+ * 'S' = a string
+ * 's' = an irnode statment (n_CLASS_STMT)
+ * 'x' = any irnode
+ * 'f' = a frame 
+ * 'D' = a list of data
+ */
+/* Rq: the actual enum value for node NAME is n_NAME. 
+ * The readable name (string) printed in debug output is "NAME" 
+ */
+
+DEF_NODE2( ADD, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )  
+DEF_NODE2( SUB, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( MUL, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( DIV, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( MOD, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( AND, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )		/* logical and && */
+DEF_NODE2( OR,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )		/* logical or || */
+DEF_NODE2( LSHIFT, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( RSHIFT, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( BOR, n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )		/* binary or | */
+DEF_NODE2( BAND,n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )		/* binary and & */
+DEF_NODE2( BXOR,n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )		/* binary xor ^ */
+DEF_NODE1( COMP,n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"e" )		/* ones complement ~ */
+DEF_NODE2( EQ,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( NE,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( GT,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( LT,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( GE,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE2( LE,  n_CLASS_EXPR, n_SUBCLASS_BINOP, 	"ee" )
+DEF_NODE1( MEM, n_CLASS_EXPR, n_SUBCLASS_MEM,   	"e" ) 
+DEF_NODE1( TEMP,n_CLASS_EXPR, n_SUBCLASS_MEM,   	"t" ) 
+DEF_NODE1( CONST, n_CLASS_EXPR, n_SUBCLASS_CONST, 	"i" )
+DEF_NODE2( CV,  n_CLASS_EXPR, n_SUBCLASS_CV,    	"ee" )		/* for future use. */
+DEF_NODE1( ZEROEXTEND, n_CLASS_EXPR, n_SUBCLASS_CV, 	"e" )		/* for future use. */
+DEF_NODE1( SIGNEXTEND, n_CLASS_EXPR, n_SUBCLASS_CV, 	"e" )		/* for future use. */
+DEF_NODE1( TRUNCATE,   n_CLASS_EXPR, n_SUBCLASS_CV, 	"e" )		/* for future use. */
+DEF_NODE1( NAME , n_CLASS_EXPR, n_SUBCLASS_MEM, 	"l" )
+DEF_NODE2( ESEQ,  n_CLASS_EXPR, n_SUBCLASS_INT, 	"se" )		/* statement evaluated for side effect, then expr returned */
+DEF_NODE3( CALL,  n_CLASS_EXPR, n_SUBCLASS_CALL, 	"eEs" )		/* e=label, E=args, s=args side-effects */
+
+DEF_NODE2( MOVE,  n_CLASS_STMT, n_SUBCLASS_MOVE, 	"Me" )
+DEF_NODE2( JUMP,  n_CLASS_STMT, n_SUBCLASS_COND, 	"el" )		/* e=expr evaluated, l=jump target */
+DEF_NODE3( CJUMP, n_CLASS_STMT, n_SUBCLASS_COND, 	"bll" )		/* b=expr evaluated, l=label to jump if true, l=if false */ 
+DEF_NODE1( LABEL, n_CLASS_STMT, n_SUBCLASS_LABEL,	"l" )
+DEF_NODE1( EXPR,  n_CLASS_STMT, n_SUBCLASS_INTERNAL, 	"e" )
+DEF_NODE3( COPY,  n_CLASS_STMT, n_SUBCLASS_INTERNAL, 	"eei" )		/* M=Dest addr, M=Src addr, size in bytes 
+                                                                           internal stmt for mem copy (M supposed aligned, size i in bytes) */
+
+DEF_NODE2( INFO,     n_CLASS_STMT, n_SUBCLASS_INTERNAL, "SS" )          /* source file, compiler version */
+DEF_NODE2( SEQ,      n_CLASS_STMT, n_SUBCLASS_INTERNAL,	"ss" )
+DEF_NODE0( NOP,      n_CLASS_STMT, n_SUBCLASS_INTERNAL,	"" )
+DEF_NODE1( PROLOGUE, n_CLASS_STMT, n_SUBCLASS_INTERNAL,	"f" )
+DEF_NODE1( EPILOGUE, n_CLASS_STMT, n_SUBCLASS_INTERNAL,	"f" )
+DEF_NODE1( GLOBAL,   n_CLASS_STMT, n_SUBCLASS_INTERNAL,	"f" )		/* global asm directive for function declaration */
+DEF_NODE5( DATA,     n_CLASS_STMT, n_SUBCLASS_INTERNAL,	"iiilD" )	/* static/global data 
+                                                                           i flag is_scalar
+                                                                           i flag if initialized (otherwise set to 0)
+                                                                           i total size (in bytes)
+                                                                           l label
+                                                                           list of data D */
+
+/* INSN definitions
+ * STTLxi stores:
+ * S = pseudo-asm instruction string
+ * T = temporaries dest-list
+ * T = temporaries src-list
+ * L = labels jump-list
+ * x = original stmt (irnode) that generated this insn
+ * i = kburg rule number (as defined in <arch>/<arch>.md) that was used for generating this insn 
+ */ 
+DEF_NODE6( INSN_MOVE,  n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )	
+DEF_NODE6( INSN_LABEL, n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )
+DEF_NODE6( INSN_JUMP,  n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )
+DEF_NODE6( INSN_CJUMP, n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )
+DEF_NODE6( INSN_RET,   n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )
+DEF_NODE6( INSN_OPER,  n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )
+DEF_NODE6( INSN_ASMD,  n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )	/* ASseMbly Directive (ex: .global or .text ) */
+DEF_NODE6( INSN_ASML,  n_CLASS_INSN, n_SUBCLASS_INSN, 	"STTLxi" )	/* ASseMbly Literal: this node is NOT parsed by insn routines */

@@ -1,0 +1,5 @@
+
+proc keen_version {} {
+   global KEEN
+ }
+
